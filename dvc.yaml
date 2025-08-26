@@ -3,7 +3,7 @@ stages:
     cmd: python src/data-preprocessing.py
     deps:
       - src/data-preprocessing.py
-      - data/raw/house_data.csv
+      - data/raw/data.csv
     outs:
       - data/processed/cleaned_data.csv
 
