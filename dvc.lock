@@ -1,0 +1,39 @@
+schema: '2.0'
+stages:
+  clean:
+    cmd: python src/data-preprocessing.py
+    deps:
+    - path: data/raw/data.csv
+      hash: md5
+      md5: f99e6d5364967fcd10a923ac3587a2c3
+      size: 3191
+    - path: src/data-preprocessing.py
+      hash: md5
+      md5: 3604bcba0f65d87167c91ffac8030cf5
+      size: 3132
+    outs:
+    - path: data/processed/cleaned_data.csv
+      hash: md5
+      md5: 96d82e0e590c125b5d276a897e7c28be
+      size: 2953
+  feature_engineering:
+    cmd: python src/feature-engineer.py --input data/processed/cleaned_data.csv --output
+      data/processed/features.csv --preprocessor src/preprocessor.pkl
+    deps:
+    - path: data/processed/cleaned_data.csv
+      hash: md5
+      md5: 96d82e0e590c125b5d276a897e7c28be
+      size: 2953
+    - path: src/feature-engineer.py
+      hash: md5
+      md5: 65cc72918ed6238d792bd8aff3f98956
+      size: 4324
+    - path: src/preprocessor.pkl
+      hash: md5
+      md5: 043c302a4db7c1e252b509f9c13ab07d
+      size: 3551
+    outs:
+    - path: data/processed/features.csv
+      hash: md5
+      md5: e945830c1fae2cefa10a5750d72a0fe2
+      size: 7395

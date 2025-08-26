@@ -1,42 +1,33 @@
 from airflow import DAG
-from airflow.operators.python import PythonOperator
+from airflow.operators.bash import BashOperator
 from datetime import datetime
-import subprocess
 
 default_args = {
-    'owner': 'airflow',
-    'start_date': datetime(2025, 1, 1),
-    'retries': 1,
+    "owner": "airflow",
+    "depends_on_past": False,
+    "start_date": datetime(2025, 1, 1),
 }
 
-dag = DAG(
-    'ml_pipeline',
+with DAG(
+    "ml_pipeline",
     default_args=default_args,
-    description='DVC + MLflow pipeline',
-    schedule_interval=None,  # manual or trigger-based
+    schedule_interval=None,
     catchup=False,
-)
+) as dag:
 
-def run_dvc_stage(stage):
-    subprocess.run(["dvc", "repro", stage], check=True)
+    clean = BashOperator(
+        task_id="clean",
+        bash_command="python /opt/airflow/dags/src/data-preprocessing.py --input /opt/airflow/dags/data/raw/data.csv --output /opt/airflow/dags/data/processed/cleaned_data.csv",
+    )
 
-clean_task = PythonOperator(
-    task_id='clean',
-    python_callable=lambda: run_dvc_stage('clean'),
-    dag=dag
-)
+    feature_engineering = BashOperator(
+        task_id="feature_engineering",
+        bash_command="python /opt/airflow/dags/src/feature-engineer.py --input /opt/airflow/dags/data/processed/cleaned_data.csv --output /opt/airflow/dags/data/processed/features.csv --preprocessor /opt/airflow/dags/src/preprocessor.pkl",
+    )
 
-feature_task = PythonOperator(
-    task_id='feature_engineering',
-    python_callable=lambda: run_dvc_stage('feature_engineering'),
-    dag=dag
-)
+    train = BashOperator(
+        task_id="train",
+        bash_command="python /opt/airflow/dags/src/train.py --config /opt/airflow/dags/src/model_config.yaml --data /opt/airflow/dags/data/processed/features.csv --models-dir /opt/airflow/dags/models --dvc",
+    )
 
-train_task = PythonOperator(
-    task_id='train',
-    python_callable=lambda: run_dvc_stage('train'),
-    dag=dag
-)
-
-# Define order
-clean_task >> feature_task >> train_task
+    clean >> feature_engineering >> train

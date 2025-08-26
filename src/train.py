@@ -64,23 +64,32 @@ def dvc_pull(path: str | None = None):
     subprocess.run(cmd, check=True)
 
 def dvc_add_and_push(path: str, remote: str | None = None):
-    logger.info("Running: dvc add %s", path)
-    subprocess.run(["dvc", "add", path], check=True)
-
-    dvc_meta = f"{path}.dvc"
-    logger.info("Running: git add %s", dvc_meta)
-    subprocess.run(["git", "add", dvc_meta], check=True)
-
     try:
-        subprocess.run(["git", "commit", "-m", f"Add model artifact {Path(path).name}"], check=True)
+        logger.info("Running: dvc add %s", path)
+        subprocess.run(["dvc", "add", path], check=True)
     except subprocess.CalledProcessError:
-        logger.info("Nothing new to commit.")
+        logger.warning("DVC add failed (maybe file already tracked): %s", path)
 
+    # Git add the .dvc file if it exists
+    dvc_meta = f"{path}.dvc"
+    if Path(dvc_meta).exists():
+        logger.info("Running: git add %s", dvc_meta)
+        subprocess.run(["git", "add", dvc_meta], check=True)
+
+        try:
+            subprocess.run(["git", "commit", "-m", f"Add model artifact {Path(path).name}"], check=True)
+        except subprocess.CalledProcessError:
+            logger.info("Nothing new to commit for %s", dvc_meta)
+
+    # DVC push (optional remote)
     push_cmd = ["dvc", "push"]
     if remote:
         push_cmd += ["-r", remote]
-    logger.info("Running: %s", " ".join(push_cmd))
-    subprocess.run(push_cmd, check=True)
+    try:
+        logger.info("Running: %s", " ".join(push_cmd))
+        subprocess.run(push_cmd, check=True)
+    except subprocess.CalledProcessError as e:
+        logger.warning("DVC push failed (maybe nothing to push): %s", e)
 
 # -----------------------------
 # Main logic
@@ -196,11 +205,7 @@ def main(args):
 
     # Push model via DVC if enabled
     if args.dvc:
-        try:
-            dvc_add_and_push(str(save_path), remote=args.dvc_remote)
-        except subprocess.CalledProcessError as e:
-            logger.error("DVC error: %s", e)
-            raise
+        dvc_add_and_push(str(save_path), remote=args.dvc_remote)
 
     logger.info("Training pipeline finished. Model saved at: %s", save_path)
 

@@ -1,0 +1,15 @@
+artifact_uri: file://E:\FullStack_MLOps_Project\models\mlruns/618691215985505776/2c51a15c51a1490d9c30595188082dca/artifacts
+end_time: 1756248903726
+entry_point_name: ''
+experiment_id: '618691215985505776'
+lifecycle_stage: active
+run_id: 2c51a15c51a1490d9c30595188082dca
+run_name: final_training
+run_uuid: 2c51a15c51a1490d9c30595188082dca
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1756248895039
+status: 3
+tags: []
+user_id: 4star
