@@ -1,6 +1,6 @@
 stages:
   clean:
-    cmd: python src/data-preprocessing.py --input data/raw/data.csv --output data/processed/cleaned_data.csv
+    cmd: python src/data-preprocessing.py
     deps:
       - src/data-preprocessing.py
       - data/raw/data.csv
@@ -24,3 +24,5 @@ stages:
       - src/model_config.yaml
     outs:
       - models/trained_model.pkl
+      - models/mlruns
+      - models/metrics.json
