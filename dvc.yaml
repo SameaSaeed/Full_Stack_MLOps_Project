@@ -1,0 +1,25 @@
+stages:
+  clean:
+    cmd: python src/data-preprocessing.py
+    deps:
+      - src/data-preprocessing.py
+      - data/raw/house_data.csv
+    outs:
+      - data/processed/cleaned_data.csv
+
+  feature_engineering:
+    cmd: python src/feature-engineer.py
+    deps:
+      - src/feature-engineer.py
+      - data/processed/cleaned_house_data.csv
+    outs:
+      - data/processed/features.csv
+
+  train:
+    cmd: python src/train.py
+    deps:
+      - src/train.py
+      - data/processed/features.csv
+    outs:
+      - models/model.pkl
+    
