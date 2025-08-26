@@ -11,15 +11,13 @@ stages:
     cmd: python src/feature-engineer.py
     deps:
       - src/feature-engineer.py
-      - data/processed/cleaned_house_data.csv
+      - data/processed/cleaned_data.csv
     outs:
       - data/processed/features.csv
 
   train:
-    cmd: python src/train.py
+    cmd: python src/train.py --config src/model_config.yaml --data data/processed/features.csv --models-dir models --dvc
     deps:
       - src/train.py
       - data/processed/features.csv
-    outs:
-      - models/model.pkl
-    
+      - src/mod

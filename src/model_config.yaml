@@ -1,0 +1,23 @@
+model:
+  best_model: LinearRegression
+  feature_sets:
+    rfe:
+    - sqft
+    - bathrooms
+    - year_built
+    - price_per_sqft
+    - bed_bath_ratio
+    - location_Suburb
+    - location_Urban
+    - condition_Fair
+    - condition_Good
+    - condition_Poor
+  mae: 26006.329366290833
+  name: house_price_model
+  parameters:
+    copy_X: true
+    fit_intercept: true
+    n_jobs: null
+    positive: false
+  r2_score: 0.9878779819239005
+  target_variable: price
