@@ -7,8 +7,9 @@ metadata:
 spec:
   selector:
     app: model-api
+  type: NodePort
   ports:
     - protocol: TCP
-      port: 80         # Port exposed internally in the cluster
-      targetPort: 8000 # Port the FastAPI app is listening on
-  type: LoadBalancer       # You can change to LoadBalancer or NodePort if needed
+      port: 80           # Service port inside cluster
+      targetPort: 8000   # Container port your app listens on
+      nodePort: 30080    # External port on each node (optional, or let k8s assign)
