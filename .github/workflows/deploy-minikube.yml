@@ -1,0 +1,44 @@
+name: Deploy to Minikube
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Set up Minikube
+        uses: manusa/actions-setup-minikube@v2.8.0
+        with:
+          kubernetes-version: 'v1.26.3'  # or your preferred version
+          minikube-version: 'v1.29.0'   # or your preferred version
+
+      - name: Start Minikube
+        run: |
+          minikube start --driver=docker
+
+      - name: Use Minikube Docker daemon
+        run: |
+          eval $(minikube -p minikube docker-env)
+
+      - name: Build Docker image inside Minikube's Docker daemon
+        run: |
+          docker build -t model-api:latest .
+
+      - name: Apply Kubernetes manifests
+        run: |
+          kubectl apply -f K8s/deployment.yaml
+          kubectl apply -f K8s/service.yaml
+
+      - name: Wait for deployment rollout to finish
+        run: |
+          kubectl rollout status deployment/model-api --timeout=120s
