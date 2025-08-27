@@ -16,8 +16,8 @@ spec:
     spec:
       containers:
         - name: model-api
-          image: ghcr.io/SameaSaeed/my-model-api:latest
-          imagePullPolicy: Always
+          image: model-api:latest
+          imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8000
           env:
