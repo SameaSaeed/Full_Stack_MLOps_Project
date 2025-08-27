@@ -1,12 +1,12 @@
 aliases: []
-creation_timestamp: 1756248903388
+creation_timestamp: 1756249394553
 current_stage: Staging
 description: null
-last_updated_timestamp: 1756248903420
+last_updated_timestamp: 1756249394586
 name: house_price_model
-run_id: 2c51a15c51a1490d9c30595188082dca
+run_id: 329e36aff2a644fea36a31c8e1e2db1f
 run_link: null
-source: runs:/2c51a15c51a1490d9c30595188082dca/tuned_model
+source: runs:/329e36aff2a644fea36a31c8e1e2db1f/tuned_model
 status: READY
 status_message: null
 user_id: null

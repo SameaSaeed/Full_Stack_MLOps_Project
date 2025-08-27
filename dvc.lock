@@ -1,7 +1,7 @@
 schema: '2.0'
 stages:
   clean:
-    cmd: python src/data-preprocessing.py
+    cmd: python src/data-preprocessing.py --input data/raw/data.csv --output data/processed/cleaned_data.csv
     deps:
     - path: data/raw/data.csv
       hash: md5

@@ -1,0 +1,6 @@
+artifact_location: file://E:\FullStack_MLOps_Project\models\mlruns/703372848858430414
+creation_time: 1756249383515
+experiment_id: '703372848858430414'
+last_update_time: 1756249383515
+lifecycle_stage: active
+name: house_price_model
