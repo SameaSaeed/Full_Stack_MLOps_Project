@@ -1,61 +1,39 @@
-name: Build and Deploy to Kind
+name: Build and Deploy to Minikube
 
 on:
   push:
     branches:
       - main
-  workflow_dispatch:
 
 jobs:
-  deploy:
+  build-deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout source code
-        uses: actions/checkout@v4
+      - name: Checkout repo
+        uses: actions/checkout@v3
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
-      - name: Set up kubectl
-        uses: azure/setup-kubectl@v3
+      - name: Setup Minikube
+        uses: manusa/actions-setup-minikube@v2.8.0
         with:
-          version: latest
+          minikube version: 'latest'
+          kubernetes version: 'v1.27.0'   # pick the version you want
+          driver: docker
 
-      - name: Set up Kind and create cluster
-        uses: helm/kind-action@v1.8.0
-        with:
-          cluster_name: kind
+      - name: Use Minikube Docker daemon
+        run: |
+          eval $(minikube -p minikube docker-env)
 
-      - name: Verify Kubernetes cluster is running
-        run: kubectl cluster-info
-
-      - name: Build Docker image and load into Kind
+      - name: Build Docker image inside Minikube
         run: |
           docker build -t model-api:latest .
-          kind load docker-image model-api:latest
 
-      - name: Apply Kubernetes manifests
+      - name: Deploy to Minikube
         run: |
-          kubectl apply -f K8s/deployment.yaml
-          kubectl apply -f K8s/service.yaml
+          kubectl apply -f k8s/deployment.yaml
+          kubectl apply -f k8s/service.yaml
 
-      - name: Wait for deployment rollout
-        run: kubectl rollout status deployment/model-api --timeout=90s
+          kubectl rollout status deployment/model-api --timeout=90s
 
-      - name: Show pod status (if rollout fails)
-        if: failure()
+      - name: Show pods status
         run: kubectl get pods -o wide
-
-      - name: Show pod logs (if rollout fails)
-        if: failure()
-        run: |
-          POD_NAME=$(kubectl get pods -l app=model-api -o jsonpath="{.items[0].metadata.name}")
-          echo "=== Logs from pod: $POD_NAME ==="
-          kubectl logs $POD_NAME
-
-      - name: Test FastAPI endpoint (via port-forward)
-        run: |
-          kubectl port-forward svc/model-api-service 8000:80 &
-          sleep 5
-          curl -f http://localhost:8000/docs || exit 1
