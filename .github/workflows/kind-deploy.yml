@@ -17,16 +17,18 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Install kubectl
+      - name: Set up kubectl
         uses: azure/setup-kubectl@v3
         with:
-          version: 'latest'
+          version: latest
 
-      - name: Install Kind
+      - name: Set up Kind and create cluster
         uses: helm/kind-action@v1.8.0
+        with:
+          cluster_name: kind
 
-      - name: Create Kubernetes cluster with Kind
-        run: kind create cluster
+      - name: Verify Kubernetes cluster is running
+        run: kubectl cluster-info
 
       - name: Build Docker image and load into Kind
         run: |
@@ -39,14 +41,13 @@ jobs:
           kubectl apply -f K8s/service.yaml
 
       - name: Wait for deployment rollout
-        run: |
-          kubectl rollout status deployment/model-api --timeout=90s
+        run: kubectl rollout status deployment/model-api --timeout=90s
 
-      - name: Show pod status if rollout fails
+      - name: Show pod status (if rollout fails)
         if: failure()
         run: kubectl get pods -o wide
 
-      - name: Show pod logs if rollout fails
+      - name: Show pod logs (if rollout fails)
         if: failure()
         run: |
           POD_NAME=$(kubectl get pods -l app=model-api -o jsonpath="{.items[0].metadata.name}")
