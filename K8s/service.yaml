@@ -11,4 +11,4 @@ spec:
     - protocol: TCP
       port: 80         # Port exposed internally in the cluster
       targetPort: 8000 # Port the FastAPI app is listening on
-  type: Load Balancer       # You can change to LoadBalancer or NodePort if needed
+  type: LoadBalancer       # You can change to LoadBalancer or NodePort if needed
