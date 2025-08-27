@@ -7,40 +7,46 @@ on:
 
 jobs:
   deploy:
-    runs-on: ubuntu-latest  # Ubuntu 22.04
+    runs-on: ubuntu-20.04
 
     steps:
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
+      - name: Install kubectl
+        run: |
+          curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+          sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+          kubectl version --client
 
-      - name: Set up Minikube
-        uses: manusa/actions-setup-minikube@v2.8.0
-        with:
-          minikube version: 'v1.29.0'     # note spaces instead of dashes
-          kubernetes version: 'v1.26.3'  # note spaces instead of dashes
-          driver: docker                 # must specify driver as docker
-          start args: '--memory=4g --cpus=2' # optional, allocate resources
+      - name: Install Minikube
+        run: |
+          curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
+          sudo install minikube-linux-amd64 /usr/local/bin/minikube
+          minikube version
 
       - name: Start Minikube
-        run: |
-          minikube start --driver=docker
+        run: minikube start --driver=docker --memory=4g --cpus=2
 
-      - name: Use Minikube Docker daemon
+      - name: Configure Docker to use Minikube's Docker daemon
         run: |
-          eval $(minikube -p minikube docker-env)
+          echo "Setting up Docker env for Minikube"
+          eval $(minikube docker-env)
 
-      - name: Build Docker image inside Minikube's Docker daemon
-        run: |
-          docker build -t model-api:latest .
+      - name: Build Docker image
+        run: docker build -t model-api:latest .
 
       - name: Apply Kubernetes manifests
         run: |
           kubectl apply -f k8s/deployment.yaml
           kubectl apply -f k8s/service.yaml
 
-      - name: Wait for deployment rollout to finish
+      - name: Wait for deployment rollout
+        run: kubectl rollout status deployment/model-api --timeout=120s
+
+      - name: Test API availability
         run: |
-          kubectl rollout status deployment/model-api --timeout=120s
+          # Port-forward in background, wait a bit, then test with curl
+          kubectl port-forward svc/model-api-service 8000:80 &
+          sleep 10
+          curl -f http://localhost:8000/health
