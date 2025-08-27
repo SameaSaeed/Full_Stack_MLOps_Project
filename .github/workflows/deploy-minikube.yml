@@ -7,7 +7,7 @@ on:
 
 jobs:
   deploy:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest  # Ubuntu 22.04
 
     steps:
       - name: Checkout code
@@ -19,8 +19,10 @@ jobs:
       - name: Set up Minikube
         uses: manusa/actions-setup-minikube@v2.8.0
         with:
-          kubernetes-version: 'v1.26.3'  # or your preferred version
-          minikube-version: 'v1.29.0'   # or your preferred version
+          minikube version: 'v1.29.0'     # note spaces instead of dashes
+          kubernetes version: 'v1.26.3'  # note spaces instead of dashes
+          driver: docker                 # must specify driver as docker
+          start args: '--memory=4g --cpus=2' # optional, allocate resources
 
       - name: Start Minikube
         run: |
@@ -36,8 +38,8 @@ jobs:
 
       - name: Apply Kubernetes manifests
         run: |
-          kubectl apply -f K8s/deployment.yaml
-          kubectl apply -f K8s/service.yaml
+          kubectl apply -f k8s/deployment.yaml
+          kubectl apply -f k8s/service.yaml
 
       - name: Wait for deployment rollout to finish
         run: |
