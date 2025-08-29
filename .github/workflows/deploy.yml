@@ -44,6 +44,11 @@ jobs:
         kubectl get pods -l app=model-api
         kubectl describe deployment model-api
         kubectl get events --field-selector type=Warning
+        kubectl get events --all-namespaces --sort-by='.metadata.creationTimestamp'
+        NODE=$(kubectl get pods -l app=model-api -o jsonpath='{.items[0].spec.nodeName}')
+        kubectl describe node $NODE
+        kubectl top nodes
+
 
     - name: Wait for rollout to finish
       run: |
