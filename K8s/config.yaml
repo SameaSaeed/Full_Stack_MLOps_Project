@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: model-api-config
+data:
+  MODEL_PATH: "/app/models/trained_model.pkl"
+  LOG_LEVEL: "INFO"
