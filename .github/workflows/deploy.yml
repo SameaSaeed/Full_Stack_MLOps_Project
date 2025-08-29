@@ -34,6 +34,12 @@ jobs:
         kubectl apply -f K8s/deployment.yaml
         kubectl apply -f K8s/service.yaml
 
+    - name: Check Pod Statuses (Debugging Step)
+      run: |
+        kubectl get pods -l app=model-api
+        kubectl describe deployment model-api
+        kubectl get events --sort-by='.metadata.creationTimestamp' --limit=10
+
     - name: Wait for rollout to finish
       run: |
-        kubectl rollout status deployment/model-api --timeout=120s
+        kubectl rollout status deployment/model-api --timeout=300s
