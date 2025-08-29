@@ -36,10 +36,7 @@ jobs:
 
     - name: Apply K8s manifests
       run: |
-        kubectl apply -f K8s/serviceaccount.yaml
-        kubectl apply -f K8s/config.yaml
-        kubectl apply -f K8s/deployment.yaml
-        kubectl apply -f K8s/service.yaml
+        kubectl apply -f K8s/manifest.yaml
 
     - name: Check Pod Statuses (Debugging Step)
       run: |
