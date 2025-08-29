@@ -38,7 +38,7 @@ jobs:
       run: |
         kubectl get pods -l app=model-api
         kubectl describe deployment model-api
-        kubectl get events --sort-by='.metadata.creationTimestamp' --limit=10
+        kubectl get events --field-selector type=Warning
 
     - name: Wait for rollout to finish
       run: |
