@@ -16,13 +16,12 @@ jobs:
     - name: Set up Minikube
       uses: manusa/actions-setup-minikube@v2.8.0
       with:
-        minikube version: 'v1.36.0'  # or your preferred version
-        kubernetes version: 'v1.26.3'  # or your preferred version
-        driver: none   # This runs minikube without virtualization (needed in GitHub runners)
-      
+        minikube_version: 'v1.35.0'
+        kubernetes_version: 'v1.32.0'
+        driver: none
+
     - name: Use Minikube Docker daemon
       run: |
-        echo "Setting Docker env to Minikube"
         eval $(minikube -p minikube docker-env)
 
     - name: Build Docker image inside Minikube
@@ -31,8 +30,8 @@ jobs:
 
     - name: Apply K8s manifests
       run: |
-        kubectl apply -f k8s/deployment.yaml
-        kubectl apply -f k8s/service.yaml
+        kubectl apply -f K8s/deployment.yaml
+        kubectl apply -f K8s/service.yaml
 
     - name: Wait for rollout to finish
       run: |

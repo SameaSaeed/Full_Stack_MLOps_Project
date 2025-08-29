@@ -1,18 +1,17 @@
-# Use a slim Python base image
 FROM python:3.11-slim
 
-# Set working directory inside container
 WORKDIR /app
 
-# Copy requirements and install dependencies
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+COPY requirements.txt /app/
 
-# Copy your FastAPI app source code from src/ into the container
-COPY src/ .
+# Update pip and install system dependencies
+RUN apt-get update && \
+    apt-get install -y libpq-dev build-essential && \
+    python -m pip install --no-cache-dir --upgrade pip && \
+    pip install --no-cache-dir -r requirements.txt
 
-# Expose port 8000 (optional for documentation)
-EXPOSE 8000
+COPY src/ /app/src/
 
-# Run the FastAPI app with uvicorn
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+WORKDIR /app/src
+
+CMD ["python", "main.py"]
