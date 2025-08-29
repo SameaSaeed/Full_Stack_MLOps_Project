@@ -24,12 +24,12 @@ spec:
             - name: MODEL_PATH
               valueFrom:
                 configMapKeyRef:
-                  name: model-api-config
+                  name: config
                   key: MODEL_PATH
             - name: LOG_LEVEL
               valueFrom:
                 configMapKeyRef:
-                  name: model-api-config
+                  name: config
                   key: LOG_LEVEL
           resources:
             requests:
@@ -38,7 +38,7 @@ spec:
             limits:
               cpu: "500m"
               memory: "512Mi"
-      serviceAccountName: model-api-sa
+      serviceAccountName: serviceaccount
       automountServiceAccountToken: false
       tolerations:
         - key: "node.kubernetes.io/not-ready"
