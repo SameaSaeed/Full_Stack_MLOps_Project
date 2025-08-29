@@ -16,9 +16,10 @@ jobs:
     - name: Set up Minikube
       uses: manusa/actions-setup-minikube@v2.13.0
       with:
-        minikube_version: 'v1.36.0'
-        kubernetes_version: 'v1.32.0'
-        driver: none
+        minikube version: 'v1.36.0'  # Specify the Minikube version
+        kubernetes version: 'v1.32.0'  # Specify the Kubernetes version
+        github token: ${{ secrets.GITHUB_TOKEN }}
+        driver: none  # Use the 'none' driver for Ubuntu 24.04
 
     - name: Use Minikube Docker daemon
       run: |
