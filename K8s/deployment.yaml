@@ -38,6 +38,20 @@ spec:
             limits:
               cpu: "500m"
               memory: "512Mi"
+          livenessProbe:
+            httpGet:
+              path: /healthz        # Adjust this to your app's health check path
+              port: 8000            # Ensure this is the correct port your app listens on
+            initialDelaySeconds: 5  # Delay before the probe starts
+            periodSeconds: 10       # How often the probe runs
+            failureThreshold: 3     # Number of failures before marking the container as unhealthy
+          readinessProbe:
+            httpGet:
+              path: /readiness      # Adjust this to your app's readiness check path
+              port: 8000            # Ensure this is the correct port your app listens on
+            initialDelaySeconds: 5  # Delay before the probe starts
+            periodSeconds: 10       # How often the probe runs
+            failureThreshold: 3     # Number of failures before marking the container as not ready
       serviceAccountName: serviceaccount
       automountServiceAccountToken: false
       tolerations:
