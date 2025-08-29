@@ -28,6 +28,11 @@ jobs:
     - name: Build Docker image inside Minikube
       run: |
         docker build -t model-api:latest .
+    
+    - name: Load image into Minikube
+      run: |
+        minikube image load model-api:latest
+        minikube image ls
 
     - name: Apply K8s manifests
       run: |
