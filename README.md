@@ -1,4 +1,4 @@
-******MLOps Pipeline: DVC + Airflow + GitHub Actions + Docker + Minikube******
+******MLOps Pipeline: DVC + MLflow + Airflow + GitHub Actions + Docker + Minikube******
 
 ****🚀 Overview****
 This repository implements a robust MLOps pipeline combining:
