@@ -19,8 +19,6 @@ Minikube
 kubectl
 GitHub account
 
-****📦 Setup Instructions****
-
 **🛠️ Setting Up DVC with Local Storage for Data Versioning**
 dvc init
 dvc remote add -d myremote /path/to/storage
